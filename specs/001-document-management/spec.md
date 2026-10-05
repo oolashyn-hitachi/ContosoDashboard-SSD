@@ -13,6 +13,7 @@
 ### Session 2026-10-05
 
 - Q: Should offline document uploads require a real local malware scanner, use a clearly labeled training simulation, or remain disabled until a scanner is available? → A: Use a clearly labeled training simulation; do not claim it detects actual malware.
+- Q: When an owner shares a document with a team, should access go to a selected department, a selected project’s members, or either group? → A: Share with users in a selected department; project access remains governed by project membership.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -31,7 +32,7 @@ uncleared files are not made available.
 
 **Acceptance Scenarios**:
 
-1. **Given** an authenticated employee and a supported file no larger than 25 MB, **When** the
+1. **Given** an authenticated employee and a supported file no larger than 25 MiB, **When** the
   employee provides a title and category and uploads the file, **Then** the training-only simulated
   screening reports it safe before it becomes available, the result is labeled as a simulation, a
   completion status is shown, and the document appears in My Documents with its recorded uploader,
@@ -78,8 +79,9 @@ user's documents.
 
 ### User Story 3 - Manage, Preview, and Share Documents (Priority: P2)
 
-Document owners and authorized project managers can keep document details current, replace outdated
-files, and permanently remove documents. Owners can share a document with selected users or teams;
+Document owners can keep document details current and replace outdated files. Owners can delete
+their own documents, and project managers can delete documents in their projects. Owners can share
+a document with selected users or a selected department;
 recipients can find and access only the documents shared with them.
 
 **Why this priority**: Ownership and controlled sharing keep documents useful over time without
@@ -95,7 +97,7 @@ with both an authorized recipient and an unrelated user; verify notifications an
    permanent only after confirmation.
 2. **Given** an authorized user viewing a PDF or image, **When** they request a preview, **Then** the
    document is previewed in the browser; for other supported file types, the user can download it.
-3. **Given** a document owner shares a document with a user or team, **When** sharing completes,
+3. **Given** a document owner shares a document with a user or selected department, **When** sharing completes,
    **Then** recipients receive an in-app notification and see it in Shared with Me; users not named
    by the share and without other access cannot retrieve it.
 4. **Given** a team lead or administrator, **When** they manage documents within their authorized
@@ -130,8 +132,8 @@ verify an administrator can review the recorded activity and produce each requir
 - The training screening simulation may mark a file as unsafe or may be unable to complete; in
   either case the file must not become available, and the user must receive a clear status labeled
   as simulated.
-- A file with a misleading extension, unsupported content type, or a size just above 25 MB must be
-  rejected without making its content available.
+- A file with a misleading extension, unsupported content type, or a size above 26,214,400 bytes
+  must be rejected without making its content available.
 - A user may guess or reuse a document link after losing project membership or after a share is no
   longer valid; current authorization must be checked when the document is accessed.
 - A document may be attached to a task whose project differs from the user's other projects; access
@@ -147,8 +149,8 @@ verify an administrator can review the recorded activity and produce each requir
   users and MUST enforce the user's existing role, ownership, team, and project access on every
   document list, search, preview, download, edit, replacement, deletion, and sharing action.
 - **FR-002**: Users MUST be able to upload one or more files per upload session. Each file MUST be
-  no larger than 25 MB and MUST be a PDF, Microsoft Word, Excel, or PowerPoint document, text file,
-  JPEG, or PNG image.
+  no larger than 25 MiB (26,214,400 bytes) and MUST be a PDF, Microsoft Word, Excel, or PowerPoint
+  document, text file, JPEG, or PNG image.
 - **FR-003**: Each uploaded document MUST have a title and one category from Project Documents,
   Team Resources, Personal Files, Reports, Presentations, or Other. Description, project association,
   and user-defined tags MUST be optional.
@@ -166,7 +168,7 @@ verify an administrator can review the recorded activity and produce each requir
   to access.
 - **FR-008**: Project members MUST be able to view and download documents associated with their
   projects. Employees MUST be able to upload personal documents and documents for projects to which
-  they are assigned. Project managers MUST be able to add and manage documents for their projects.
+  they are assigned. Project managers MUST be able to add documents for their projects.
 - **FR-009**: Team leads MUST be able to view and manage documents uploaded by their team members.
   Administrators MUST have access to all documents.
 - **FR-010**: Authorized users MUST be able to download accessible documents. They MUST be able to
@@ -174,9 +176,11 @@ verify an administrator can review the recorded activity and produce each requir
 - **FR-011**: Document owners MUST be able to edit title, description, category, and tags and replace
   the current file. Owners MUST be able to permanently delete their documents after confirmation;
   project managers MUST be able to delete documents in their projects.
-- **FR-012**: Document owners MUST be able to share documents with selected users or teams.
-  Recipients MUST receive an in-app notification and see the shared document in Shared with Me.
-  Sharing MUST grant access only to the selected recipients and MUST NOT expose other documents.
+- **FR-012**: Document owners MUST be able to share documents with selected users or a selected
+  department. A department share MUST grant access to users in that department only; project
+  membership MUST remain an independent source of project-document access. Recipients MUST receive
+  an in-app notification and see the shared document in Shared with Me. Sharing MUST NOT expose
+  other documents.
 - **FR-013**: Users MUST be able to view and attach related documents from a task. A document
   uploaded from a task MUST be associated with that task's project.
 - **FR-014**: The dashboard MUST show the signed-in user's five most recently uploaded documents
@@ -195,8 +199,8 @@ verify an administrator can review the recorded activity and produce each requir
 
 - **Document**: A work-related file and its title, description, category, tags, project or task
   associations, uploader, upload date, size, and file type.
-- **Document Share**: A document-specific grant of access to one or more users or teams, including
-  its recipients and sharing activity.
+- **Document Share**: A document-specific grant of access to selected users or users in a selected
+  department, including its recipients and sharing activity.
 - **Document Activity**: A record of an upload, download, deletion, share, metadata edit, or file
   replacement, its actor, the affected document, and when it occurred.
 - **Project and Task Association**: The project or task context that determines where a document is
@@ -206,7 +210,7 @@ verify an administrator can review the recorded activity and produce each requir
 
 ### Measurable Outcomes
 
-- **SC-001**: Users can complete a valid upload of a file up to 25 MB within 30 seconds on a typical
+- **SC-001**: Users can complete a valid upload of a file up to 25 MiB within 30 seconds on a typical
   training network and can complete the upload workflow in no more than three user actions after
   opening the upload flow.
 - **SC-002**: A list of up to 500 accessible documents is usable within 2 seconds.
@@ -224,13 +228,13 @@ verify an administrator can review the recorded activity and produce each requir
 
 - Existing dashboard authentication, roles, project memberships, and team memberships are reused;
   no new identity or team-management capability is introduced.
-- “Team” means a team already represented in the dashboard's existing user and project membership
-  data.
+- “Team” in document sharing means users in a selected department, matching the existing My Team
+  view. Project membership remains separate and governs access to project documents.
 - Upload screening is a training-only simulation that does not detect actual viruses or malware.
   If the simulation marks a file unsafe or cannot complete, the file remains unavailable and the
   upload is reported as unsuccessful.
 - The 30-second upload target is measured under a typical training network; users may upload several
-  files in a session, with the 25 MB limit applying to each file.
+  files in a session, with the 25 MiB (26,214,400 bytes) limit applying to each file.
 - The dashboard document count means documents uploaded by the signed-in user. Recent Documents
   likewise shows that user's uploads.
 - The initial release is web-based, local, and offline-capable. Cloud storage, external document
