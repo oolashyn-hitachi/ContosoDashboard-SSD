@@ -8,6 +8,12 @@
 
 **Input**: User description: Create document upload and management capabilities. Source: [Stakeholder requirements](../../StakeholderDocs/document-upload-and-management-feature.md).
 
+## Clarifications
+
+### Session 2026-10-05
+
+- Q: Should offline document uploads require a real local malware scanner, use a clearly labeled training simulation, or remain disabled until a scanner is available? → A: Use a clearly labeled training simulation; do not claim it detects actual malware.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Upload and Find Documents (Priority: P1)
@@ -26,15 +32,16 @@ uncleared files are not made available.
 **Acceptance Scenarios**:
 
 1. **Given** an authenticated employee and a supported file no larger than 25 MB, **When** the
-   employee provides a title and category and uploads the file, **Then** the document is screened
-   before storage, a completion status is shown, and the document appears in My Documents with its
-   recorded uploader, upload date, size, and file type.
+  employee provides a title and category and uploads the file, **Then** the training-only simulated
+  screening reports it safe before it becomes available, the result is labeled as a simulation, a
+  completion status is shown, and the document appears in My Documents with its recorded uploader,
+  upload date, size, and file type.
 2. **Given** an employee selects multiple supported files, **When** they provide the required
    details for each file and submit, **Then** each file is processed independently and its result is
    reported without hiding another file's success or failure.
-3. **Given** an upload exceeds the size limit, has an unsupported type, or cannot pass malware
-   screening, **When** the employee submits it, **Then** it is not stored or listed as an available
-   document and a clear error is shown.
+3. **Given** an upload exceeds the size limit, has an unsupported type, or the screening simulation
+  marks it unsafe or cannot complete, **When** the employee submits it, **Then** it is not made
+  available and a clear error is shown; the screening result is identified as simulated.
 4. **Given** the employee has documents, **When** they search, sort, or filter My Documents,
    **Then** results match the requested title, description, tag, uploader, project, category, date
    range, or sort order and include only documents they may access.
@@ -120,8 +127,9 @@ verify an administrator can review the recorded activity and produce each requir
 
 - A multi-file upload may have a mix of successful and failed files; each outcome must be reported
   independently and successful files must remain usable.
-- Malware screening may identify a file as unsafe or may be unavailable; in either case the file
-  must not become available, and the user must receive a clear status.
+- The training screening simulation may mark a file as unsafe or may be unable to complete; in
+  either case the file must not become available, and the user must receive a clear status labeled
+  as simulated.
 - A file with a misleading extension, unsupported content type, or a size just above 25 MB must be
   rejected without making its content available.
 - A user may guess or reuse a document link after losing project membership or after a share is no
@@ -146,9 +154,10 @@ verify an administrator can review the recorded activity and produce each requir
   and user-defined tags MUST be optional.
 - **FR-004**: The system MUST record each document's upload date and time, uploader, file size, and
   file type, and MUST show upload progress and a distinct success or error result for every file.
-- **FR-005**: The system MUST screen each file for viruses and malware before making it available.
-  It MUST reject unsupported, oversized, unsafe, or unscreened files and explain the outcome to the
-  uploader.
+- **FR-005**: The system MUST apply a training-only simulated screening step before making a file
+  available. It MUST clearly identify the result as simulated and MUST NOT claim to detect actual
+  viruses or malware. It MUST reject unsupported, oversized, simulated-unsafe, or unscreened files
+  and explain the outcome to the uploader.
 - **FR-006**: Users MUST be able to view their uploaded documents with title, category, upload date,
   file size, and associated project; sort by title, upload date, category, or file size; and filter by
   category, project, or date range.
@@ -217,8 +226,9 @@ verify an administrator can review the recorded activity and produce each requir
   no new identity or team-management capability is introduced.
 - “Team” means a team already represented in the dashboard's existing user and project membership
   data.
-- A malware-screening capability is available in the offline training environment. If screening
-  cannot complete, the file remains unavailable and the upload is reported as unsuccessful.
+- Upload screening is a training-only simulation that does not detect actual viruses or malware.
+  If the simulation marks a file unsafe or cannot complete, the file remains unavailable and the
+  upload is reported as unsuccessful.
 - The 30-second upload target is measured under a typical training network; users may upload several
   files in a session, with the 25 MB limit applying to each file.
 - The dashboard document count means documents uploaded by the signed-in user. Recent Documents
@@ -226,5 +236,5 @@ verify an administrator can review the recorded activity and produce each requir
 - The initial release is web-based, local, and offline-capable. Cloud storage, external document
   providers, mobile apps, collaborative editing, version history, recovery of permanently deleted
   files, templates, and storage quotas are out of scope.
-- This feature is for training. Its access controls and malware screening do not establish
+- This feature is for training. Its access controls and simulated malware screening do not establish
   production readiness, regulatory compliance, or a guarantee against security incidents.
